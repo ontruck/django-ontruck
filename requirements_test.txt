@@ -1,0 +1,13 @@
+coverage==4.4.1
+flake8>=2.1.0
+tox>=1.7.0
+codecov>=2.0.0
+djangorestframework==3.9.4
+
+pytest==4.5.0
+pytest-cov==2.7.1
+pytest-django==3.4.8
+pytest-mock==2.0.0
+
+
+# Additional test requirements go here
