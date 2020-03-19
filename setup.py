@@ -57,7 +57,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=[],
-    license="MIT",
+    license="BSD",
     zip_safe=False,
     keywords='django-ontruck',
     classifiers=[
