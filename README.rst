@@ -2,7 +2,7 @@
 django-ontruck
 =============================
 
-
+.. image:: https://user-images.githubusercontent.com/4689706/77090966-3504a180-6a08-11ea-8cfb-7ac145d65d43.png
 
 |build-status| |coverage| |docs| |license|
 

@@ -9,9 +9,6 @@ Welcome to django-ontruck's documentation!
 =================================================================
 
 
-.. image:: ontruck.svg
-
-
 Contents:
 
 .. toctree::
