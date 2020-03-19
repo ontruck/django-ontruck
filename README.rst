@@ -4,7 +4,7 @@ django-ontruck
 
 
 
-|build-status| |coverage| |license|
+|build-status| |coverage| |docs| |license|
 
 
 
@@ -87,9 +87,15 @@ Generate documentation
 
 .. |build-status| image:: https://travis-ci.org/ontruck/django-ontruck.svg?branch=master
     :target: https://travis-ci.org/ontruck/django-ontruck
+    :alt: Build status
 
 .. |coverage| image:: https://codecov.io/gh/ontruck/django-ontruck/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ontruck/django-ontruck
+    :alt: Coverage status
+
+.. |docs| image:: https://readthedocs.org/projects/django-ontruck/badge/?version=latest
+    :target: https://django-ontruck.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 .. |license| image:: https://img.shields.io/pypi/l/celery.svg
     :alt: BSD License
