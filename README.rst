@@ -8,7 +8,7 @@ django-ontruck
 
 
 
-Extended Django for Ontruck
+Django extended by Ontruck-ers
 
 Documentation
 -------------
