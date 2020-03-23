@@ -47,6 +47,15 @@ Abstraction to decouple contexts wrapping django signals
     class FooEvent(EventBase):
         signal = Signal(['attr1'])
 
+There is a django command to get a list of all apps Events and handlers connected
+
+.. code-block:: shell
+
+    python manage.py show_events
+
+.. image:: images/show_events_command.png
+
+
 *********
 Models
 *********
