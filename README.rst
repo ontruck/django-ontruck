@@ -86,8 +86,8 @@ Generate documentation
     (myenv) $ make docs
 
 
-.. |build-status| image:: https://travis-ci.org/ontruck/django-ontruck.svg?branch=master
-    :target: https://travis-ci.org/ontruck/django-ontruck
+.. |build-status| image:: https://travis-ci.com/ontruck/django-ontruck.svg?branch=master
+    :target: https://travis-ci.com/ontruck/django-ontruck
     :alt: Build status
 
 .. |coverage| image:: https://codecov.io/gh/ontruck/django-ontruck/branch/master/graph/badge.svg
