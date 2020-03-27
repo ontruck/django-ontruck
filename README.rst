@@ -42,6 +42,7 @@ Features
 * Models
 * Views
 * Testing
+* Commands
 
 Running Tests
 -------------

@@ -47,7 +47,8 @@ Abstraction to decouple contexts wrapping django signals
     class FooEvent(EventBase):
         signal = Signal(['attr1'])
 
-There is a django command to get a list of all apps Events and handlers connected
+
+Check `show_events` command to `List all events`_.
 
 .. code-block:: shell
 
@@ -114,3 +115,30 @@ Mark your tests you want to use it
             mock_event_send = mocker.patch('django_ontruck.events.EventBase.send')
             foo_use_case.execute({})
             mock_event_send.assert_called_once()
+
+
+
+*********
+Commands
+*********
+
+List all events
+-----------------
+
+Show all events defined in each app and handlers connected.
+
+.. code-block:: shell
+
+    python manage.py show_events
+
+.. image:: images/show_events_command.png
+
+
+App template
+-------------
+
+Start app with directory/files structure.
+
+.. code-block:: python
+
+    python manage.py startontruckapp appname
