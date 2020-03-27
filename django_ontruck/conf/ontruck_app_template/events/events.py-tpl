@@ -1,0 +1,3 @@
+from django_ontruck.events import EventBase
+
+# Define your events

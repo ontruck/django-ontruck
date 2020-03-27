@@ -1,0 +1,3 @@
+from {{ app_name }} import use_cases
+
+# Create serializers here.

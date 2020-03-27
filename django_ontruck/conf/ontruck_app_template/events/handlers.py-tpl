@@ -1,0 +1,3 @@
+from {{ app_name }} import tasks
+
+# Define your event handlers

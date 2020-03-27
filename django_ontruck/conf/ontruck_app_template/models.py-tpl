@@ -1,0 +1,3 @@
+from django_ontruck.models import BaseModel
+
+# Create your models here.

@@ -1,0 +1,5 @@
+from django_ontruck import views
+
+from {{ app_name }} import serializers
+
+## Create your views here.

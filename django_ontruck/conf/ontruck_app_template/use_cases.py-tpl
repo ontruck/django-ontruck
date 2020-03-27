@@ -1,0 +1,6 @@
+from django_ontruck.use_cases import UseCaseBase
+
+from {{ app_name }} import models
+from {{ app_name }} import events
+
+# Create your use cases here.
