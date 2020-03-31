@@ -1,0 +1,5 @@
+from celery import shared_task
+
+from {{ app_name }} import use_cases
+
+# Create your celery tasks here.

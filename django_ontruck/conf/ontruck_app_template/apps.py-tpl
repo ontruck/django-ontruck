@@ -1,0 +1,10 @@
+
+from django.apps import AppConfig
+
+
+class {{ camel_case_app_name }}Config(AppConfig):
+    name = '{{ app_name }}'
+
+    def ready(self):
+        from .events import handlers
+        # Connect your handlers to events here
