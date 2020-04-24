@@ -1,12 +1,24 @@
+from weakref import WeakKeyDictionary
+
 import django
 from django.db import DEFAULT_DB_ALIAS
 from django.db.transaction import get_connection, Atomic
-from collections import defaultdict
 from contextlib import ContextDecorator
+
+class WeakKeyDefaultDictionary:
+    def __init__(self, default):
+        self._store = WeakKeyDictionary()
+        self._default = default
+
+    def __getitem__(self, item):
+        return self._store.setdefault(item, self._default())
+
+    def __setitem__(self, key, value):
+        self._store[key] = value
 
 
 class DepthTrackingAtomic(ContextDecorator):
-    atomic_registry = defaultdict(list)
+    atomic_registry = WeakKeyDefaultDictionary(list)
 
     def __init__(self, atomic):
         self._atomic = atomic
