@@ -5,6 +5,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.db.transaction import get_connection, Atomic
 from contextlib import ContextDecorator
 
+
 class WeakKeyDefaultDictionary:
     def __init__(self, default):
         self._store = WeakKeyDictionary()
