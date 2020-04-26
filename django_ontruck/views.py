@@ -20,11 +20,15 @@ class OntruckPagination(PageNumberPagination):
 
 
 class OntruckCreateMixin(mixins.CreateModelMixin):
+
+    def update_serializer_for_create(self, serializer, request):
+        serializer.validated_data['created_by'] = request.user
+        serializer.validated_data['modified_by'] = request.user
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data['created_by'] = request.user
-        serializer.validated_data['modified_by'] = request.user
+        self.update_serializer_for_create(serializer, request)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -39,24 +43,32 @@ class OntruckUseCaseCreateMixin(mixins.CreateModelMixin):
             raise NotImplementedError("Missing use_case_creation_class definition")
         return self.use_case_creation_class()
 
+    def get_command_for_create(self, serializer, request):
+        command = serializer.validated_data.copy()
+        command['created_by'] = command['modified_by'] = request.user
+        return command
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data['created_by'] = request.user
-        serializer.validated_data['modified_by'] = request.user
-        response = self.use_case_creation.execute(serializer.validated_data, executed_by=request.user)
+        command = self.get_command_for_create(serializer, request)
+        response = self.use_case_creation.execute(command, executed_by=request.user)
         serializer = self.get_serializer(instance=response)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class OntruckUpdateMixin(mixins.UpdateModelMixin):
+
+    def update_serializer_for_update(self, serializer, request):
+        serializer.validated_data['modified_by'] = request.user
+
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data['modified_by'] = request.user
+        self.update_serializer_for_update(serializer, request)
         self.perform_update(serializer)
         return Response(serializer.data)
 
