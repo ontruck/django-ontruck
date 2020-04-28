@@ -115,6 +115,25 @@ class TestViews:
         assert foo_model.extra == 'extra_create_use_case'
 
     @mark.django_db
+    def test_update_use_case_view_set_ok(self, user):
+        sample = FooModel.objects.create(title='title')
+        request = factory.put('/{}/'.format(sample.id), json.dumps({'title': 'test_title'}),
+                               content_type='application/json')
+        force_authenticate(request, user=user)
+        my_view = FooOntruckUseCaseViewSet.as_view(actions={
+            'put': 'update',
+        })
+
+        response = my_view(request, pk=sample.id)
+        assert response.status_code == 200
+        assert FooModel.objects.count() == 1
+        foo_model = FooModel.objects.first()
+        assert foo_model.title == 'test_title'
+        assert foo_model.modified_at is not None
+        assert foo_model.modified_by == user
+        assert foo_model.extra == 'extra_update_use_case'
+
+    @mark.django_db
     def test_pagination(self, user):
         sample = FooModel.objects.create(title='title')
         request = factory.get('/', '', content_type='application/json')

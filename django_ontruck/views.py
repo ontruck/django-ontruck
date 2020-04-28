@@ -73,6 +73,31 @@ class OntruckUpdateMixin(mixins.UpdateModelMixin):
         return Response(serializer.data)
 
 
+class OntruckUseCaseUpdateMixin(mixins.UpdateModelMixin):
+    use_case_update_class = None
+
+    @property
+    def use_case_update(self):
+        if self.use_case_update_class is None:
+            raise NotImplementedError("Missing use_case_update_class definition")
+        return self.use_case_update_class()
+
+    def get_command_for_update(self, instance, serializer, request):
+        command = serializer.validated_data.copy()
+        command['modified_by'] = request.user
+        return command
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        command = self.get_command_for_update(instance, serializer, request)
+        response = self.use_case_update.execute(command, executed_by=request.user)
+        serializer = self.get_serializer(instance=response)
+        return Response(serializer.data)
+
+
 class OntruckDeleteMixin(mixins.DestroyModelMixin):
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -133,7 +158,7 @@ class OntruckViewSet(OntruckCreateMixin,
 
 
 class OntruckUseCaseViewSet(OntruckUseCaseCreateMixin,
-                            OntruckUpdateMixin,
+                            OntruckUseCaseUpdateMixin,
                             OntruckReadViewSet
                             ):
     pass

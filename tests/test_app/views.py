@@ -2,7 +2,7 @@ from django_ontruck.views import OntruckDelViewSet, OntruckViewSet, OntruckUseCa
 
 from .models import FooModel
 from .serializers import FooSerializer
-from .use_cases import FooUseCase
+from .use_cases import FooCreateUseCase, FooUpdateUseCase
 
 
 class FooOntruckViewSet(OntruckViewSet):
@@ -17,6 +17,7 @@ class FooOntruckViewSet(OntruckViewSet):
         super(FooOntruckViewSet, self).update_serializer_for_update(serializer, request)
         serializer.validated_data['extra'] = 'extra_update'
 
+
 class FooOntruckDelViewSet(OntruckDelViewSet):
     serializer_class = FooSerializer
     queryset = FooModel.objects.all()
@@ -25,11 +26,18 @@ class FooOntruckDelViewSet(OntruckDelViewSet):
 class FooOntruckUseCaseViewSet(OntruckUseCaseViewSet):
     serializer_class = FooSerializer
     queryset = FooModel.objects.all()
-    use_case_creation_class = FooUseCase
+    use_case_creation_class = FooCreateUseCase
+    use_case_update_class = FooUpdateUseCase
 
     def get_command_for_create(self, serializer, request):
         command = super(FooOntruckUseCaseViewSet, self).get_command_for_create(serializer, request)
         command['extra'] = 'extra_create_use_case'
+        return command
+
+    def get_command_for_update(self, instance, serializer, request):
+        command = super(FooOntruckUseCaseViewSet, self).get_command_for_update(instance, serializer, request)
+        command['id'] = instance.id
+        command['extra'] = 'extra_update_use_case'
         return command
 
 
