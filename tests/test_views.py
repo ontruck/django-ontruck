@@ -45,6 +45,7 @@ class TestViews:
         assert foo_model.modified_at is not None
         assert foo_model.created_by == user
         assert foo_model.modified_by == user
+        assert foo_model.extra == 'extra_create'
 
     @mark.django_db
     def test_update_view_set_validation_error(self, user):
@@ -75,6 +76,7 @@ class TestViews:
         assert foo_model.title == 'test_title'
         assert foo_model.modified_at is not None
         assert foo_model.modified_by == user
+        assert foo_model.extra == 'extra_update'
 
     @mark.django_db
     def test_delete_view_set_ok(self, user):
@@ -110,6 +112,7 @@ class TestViews:
         assert foo_model.modified_at is not None
         assert foo_model.created_by == user
         assert foo_model.modified_by == user
+        assert foo_model.extra == 'extra_create_use_case'
 
     @mark.django_db
     def test_pagination(self, user):
