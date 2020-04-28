@@ -84,6 +84,7 @@ class OntruckUseCaseUpdateMixin(mixins.UpdateModelMixin):
 
     def get_command_for_update(self, instance, serializer, request):
         command = serializer.validated_data.copy()
+        command['instance'] = instance
         command['modified_by'] = request.user
         return command
 

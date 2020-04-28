@@ -36,7 +36,6 @@ class FooOntruckUseCaseViewSet(OntruckUseCaseViewSet):
 
     def get_command_for_update(self, instance, serializer, request):
         command = super(FooOntruckUseCaseViewSet, self).get_command_for_update(instance, serializer, request)
-        command['id'] = instance.id
         command['extra'] = 'extra_update_use_case'
         return command
 
