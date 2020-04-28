@@ -9,6 +9,20 @@ class FooOntruckViewSet(OntruckViewSet):
     serializer_class = FooSerializer
     queryset = FooModel.objects.all()
 
+    def get_data_for_create_serializer(self, request, *args, **kwargs):
+        data = super(FooOntruckViewSet, self).get_data_for_create_serializer(request, *args, **kwargs)
+        pre_serializer = kwargs.get('pre_serializer', None)
+        if pre_serializer:
+            data['pre_serializer'] = pre_serializer
+        return data
+
+    def get_data_for_update_serializer(self, request, *args, **kwargs):
+        data = super(FooOntruckViewSet, self).get_data_for_update_serializer(request, *args, **kwargs)
+        pre_serializer = kwargs.get('pre_serializer', None)
+        if pre_serializer:
+            data['pre_serializer'] = pre_serializer
+        return data
+
     def update_serializer_for_create(self, serializer, request):
         super(FooOntruckViewSet, self).update_serializer_for_create(serializer, request)
         serializer.validated_data['extra'] = 'extra_create'
@@ -28,6 +42,20 @@ class FooOntruckUseCaseViewSet(OntruckUseCaseViewSet):
     queryset = FooModel.objects.all()
     use_case_creation_class = FooCreateUseCase
     use_case_update_class = FooUpdateUseCase
+
+    def get_data_for_create_serializer(self, request, *args, **kwargs):
+        data = super(FooOntruckUseCaseViewSet, self).get_data_for_create_serializer(request, *args, **kwargs)
+        pre_serializer = kwargs.get('pre_serializer', None)
+        if pre_serializer:
+            data['pre_serializer'] = pre_serializer
+        return data
+
+    def get_data_for_update_serializer(self, request, *args, **kwargs):
+        data = super(FooOntruckUseCaseViewSet, self).get_data_for_update_serializer(request, *args, **kwargs)
+        pre_serializer = kwargs.get('pre_serializer', None)
+        if pre_serializer:
+            data['pre_serializer'] = pre_serializer
+        return data
 
     def get_command_for_create(self, serializer, request):
         command = super(FooOntruckUseCaseViewSet, self).get_command_for_create(serializer, request)

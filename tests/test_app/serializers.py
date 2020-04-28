@@ -7,4 +7,4 @@ class FooSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FooModel
-        fields = ['title']
+        fields = ['title', 'pre_serializer']
