@@ -4,7 +4,7 @@ from django.db import transaction
 
 from pytest import fixture, mark
 
-from .test_app.use_cases import FooUseCase
+from .test_app.use_cases import FooCreateUseCase
 
 
 class TestUseCases:

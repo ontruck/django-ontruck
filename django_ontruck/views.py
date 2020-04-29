@@ -20,11 +20,19 @@ class OntruckPagination(PageNumberPagination):
 
 
 class OntruckCreateMixin(mixins.CreateModelMixin):
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+
+    def get_data_for_create_serializer(self, request, *args, **kwargs):
+        return request.data
+
+    def update_serializer_for_create(self, serializer, request):
         serializer.validated_data['created_by'] = request.user
         serializer.validated_data['modified_by'] = request.user
+
+    def create(self, request, *args, **kwargs):
+        data = self.get_data_for_create_serializer(request, *args, **kwargs)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.update_serializer_for_create(serializer, request)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -39,25 +47,71 @@ class OntruckUseCaseCreateMixin(mixins.CreateModelMixin):
             raise NotImplementedError("Missing use_case_creation_class definition")
         return self.use_case_creation_class()
 
+    def get_command_for_create(self, serializer, request):
+        command = serializer.validated_data.copy()
+        command['created_by'] = command['modified_by'] = request.user
+        return command
+
+    def get_data_for_create_serializer(self, request, *args, **kwargs):
+        return request.data
+
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        data = self.get_data_for_create_serializer(request, *args, **kwargs)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data['created_by'] = request.user
-        serializer.validated_data['modified_by'] = request.user
-        response = self.use_case_creation.execute(serializer.validated_data, executed_by=request.user)
+        command = self.get_command_for_create(serializer, request)
+        response = self.use_case_creation.execute(command, executed_by=request.user)
         serializer = self.get_serializer(instance=response)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class OntruckUpdateMixin(mixins.UpdateModelMixin):
+
+    def get_data_for_update_serializer(self, request, *args, **kwargs):
+        return request.data
+
+    def update_serializer_for_update(self, serializer, request):
+        serializer.validated_data['modified_by'] = request.user
+
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        data = self.get_data_for_update_serializer(request, *args, **kwargs)
+        serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data['modified_by'] = request.user
+        self.update_serializer_for_update(serializer, request)
         self.perform_update(serializer)
+        return Response(serializer.data)
+
+
+class OntruckUseCaseUpdateMixin(mixins.UpdateModelMixin):
+    use_case_update_class = None
+
+    def get_data_for_update_serializer(self, request, *args, **kwargs):
+        return request.data
+
+    @property
+    def use_case_update(self):
+        if self.use_case_update_class is None:
+            raise NotImplementedError("Missing use_case_update_class definition")
+        return self.use_case_update_class()
+
+    def get_command_for_update(self, instance, serializer, request):
+        command = serializer.validated_data.copy()
+        command['instance'] = instance
+        command['modified_by'] = request.user
+        return command
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = self.get_data_for_update_serializer(request, *args, **kwargs)
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        command = self.get_command_for_update(instance, serializer, request)
+        response = self.use_case_update.execute(command, executed_by=request.user)
+        serializer = self.get_serializer(instance=response)
         return Response(serializer.data)
 
 
@@ -121,7 +175,7 @@ class OntruckViewSet(OntruckCreateMixin,
 
 
 class OntruckUseCaseViewSet(OntruckUseCaseCreateMixin,
-                            OntruckUpdateMixin,
+                            OntruckUseCaseUpdateMixin,
                             OntruckReadViewSet
                             ):
     pass

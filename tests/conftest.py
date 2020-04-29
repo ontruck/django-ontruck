@@ -3,7 +3,7 @@ import pytest
 from django.contrib.auth.models import User
 
 from django_ontruck.test import PatchedAtomic
-from .test_app.use_cases import FooUseCase
+from .test_app.use_cases import FooCreateUseCase
 from .test_app.events import FooEvent
 from .test_app.models import FooModel
 
@@ -21,7 +21,7 @@ def _run_on_commit_callbacks(request):
 
 @pytest.fixture
 def foo_use_case():
-    return FooUseCase()
+    return FooCreateUseCase()
 
 
 @pytest.fixture
