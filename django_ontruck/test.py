@@ -65,13 +65,12 @@ class PytestAtomic(DepthTrackingAtomic):
         return self.depth == 0
 
     def run_and_clear_commit_hooks(self):
-        [func() for _, func in self.connection.run_on_commit]
-
-        self.connection.run_on_commit = []
+        while self.connection.run_on_commit:
+            _, func = self.connection.run_on_commit.pop()
+            func()
 
     def __exit__(self, *args):
         returned = super().__exit__(*args)
-
         if self.at_test_root_transaction:
             self.run_and_clear_commit_hooks()
 

@@ -1,6 +1,7 @@
 from django.db import transaction
 import sys
 from pytest import fixture, mark, raises
+from .test_app.events import FooEvent
 
 
 class CallbackInvoked(BaseException):
@@ -12,7 +13,6 @@ class TestPytestAtomic:
     def callback(self):
         def throw():
             raise CallbackInvoked()
-
         return throw
 
     @mark.django_db
@@ -43,3 +43,17 @@ class TestPytestAtomic:
 
             transaction.on_commit(callback)
         # No callbacks should be run and so no CallbackInvoked raised
+
+
+    @mark.django_db
+    @mark.run_on_commit_callbacks  # <= This is what's being tested
+    def test_it_runs_callbacks_from_a_transaction_created_from_on_commit(self, foo_use_case):
+        def recursion_handler(attr1, **kwargs):
+            from tests.test_app.use_cases import FooUpdateUseCase
+            from .test_app.models import FooModel
+            uc = FooUpdateUseCase(disable_events=True)
+            uc.execute({'instance': FooModel.objects.first(), 'title': attr1})
+        # not removing funcs from connection.run_on_commit before execution raises recursion
+        FooEvent.connect(recursion_handler)
+        foo_use_case.execute({})
+
