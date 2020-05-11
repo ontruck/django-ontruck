@@ -20,3 +20,16 @@ class TestEvents:
         mock_event_handler = mocker.patch('tests.test_app.events.handlers.foo_event_handler')
         foo_event.send()
         mock_event_handler.called_once_with(attr1='attr1_value')
+
+    def test_disconnect(self, mocker, foo_event):
+        mock_event_handler = mocker.patch('tests.test_app.events.handlers.foo_event_handler')
+        foo_event.disconnect()
+        foo_event.send()
+        mock_event_handler.not_called()
+
+    def test_receiver(self, mocker, foo_event):
+        mock_event_handler = mocker.patch('tests.test_app.events.handlers.foo_event_handler_with_receiver')
+        foo_event.send()
+        mock_event_handler.called_once_with(attr1='attr1_value')
+
+
