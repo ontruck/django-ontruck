@@ -9,3 +9,8 @@ def foo_event_handler(attr1, **kwargs):
 @receiver(FooEvent)
 def foo_event_handler_with_receiver(attr1, **kwargs):
     pass
+
+
+@receiver([FooEvent])
+def foo_event_handler_with_list_of_receivers(attr1, **kwargs):
+    pass

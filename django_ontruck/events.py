@@ -1,4 +1,4 @@
-from django.dispatch.dispatcher import receiver as django_receiver
+from django.dispatch.dispatcher import receiver as signal_receiver
 
 
 class EventBase:
@@ -21,4 +21,8 @@ class EventBase:
 
 
 def receiver(event, **kwargs):
-    return django_receiver(event.signal, **kwargs)
+    if isinstance(event, (list, tuple)):
+        events = [e.signal for e in event]
+    else:
+        events = [event.signal]
+    return signal_receiver(events, **kwargs)

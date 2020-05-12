@@ -32,4 +32,9 @@ class TestEvents:
         foo_event.send()
         mock_event_handler.called_once_with(attr1='attr1_value')
 
+    def test_reciver_list(self, mocker, foo_event):
+        mock_event_handler = mocker.patch('tests.test_app.events.handlers.foo_event_handler_with_list_of_receivers')
+        foo_event.send()
+        mock_event_handler.called_once_with(attr1='attr1_value')
+
 
