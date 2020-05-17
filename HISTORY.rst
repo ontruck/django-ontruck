@@ -3,6 +3,11 @@
 History
 -------
 
+0.5.0 (2020-5-17)
++++++++++++++++++
+
+* Implement django signal methods (disconnect, receiver) for Events
+
 0.4.0 (2020-4-29)
 +++++++++++++++++
 
