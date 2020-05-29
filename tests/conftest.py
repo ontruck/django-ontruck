@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from django_ontruck.test import PatchedAtomic
 from .test_app.use_cases import FooCreateUseCase
+from .test_app.queries import CountFooQuery
 from .test_app.events import FooEvent
 from .test_app.models import FooModel
 
@@ -36,3 +37,7 @@ def user():
 @pytest.fixture
 def foo_model():
     return FooModel.objects.create(title='title')
+
+@pytest.fixture
+def foo_query():
+    return CountFooQuery()

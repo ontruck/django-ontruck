@@ -58,6 +58,21 @@ Check `show_events` command to `List all events`_.
 
 
 *********
+Queries
+*********
+
+Analogue to CQRS, a separation between the logic that writes (use cases) from the one that reads (queries).
+
+.. code-block:: python
+
+    class CountFooQuery(QueryBase):
+
+        def execute(self, command, executed_by=None):
+            text = command.get('title')
+            return {'count': FooModel.objects.filter(title__contains=text).count()}
+
+
+*********
 Models
 *********
 
