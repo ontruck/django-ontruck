@@ -39,6 +39,7 @@ Features
 
 * Use cases
 * Events
+* Queries
 * Models
 * Views
 * Testing
