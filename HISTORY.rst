@@ -3,6 +3,15 @@
 History
 -------
 
+0.7.0 (2020-6-10)
++++++++++++++++++
+
+* SortedJSONField serializer
+* python 3.8 CI upgrade
+* Django 2.2.13 CI upgrade
+* Drop Django 2.1 CI
+
+
 0.6.0 (2020-5-29)
 +++++++++++++++++
 
