@@ -3,8 +3,8 @@ import logging
 import pika
 import json
 from django.conf import settings
-from utils.rabbitmq import RabbitMQConnectionManager
-from utils.retry import retry
+from django_ontruck.utils.rabbitmq import RabbitMQConnectionManager
+from django_ontruck.utils.retry import retry
 
 from .mq_locmem_client import MQLocMemClient
 from .notifier import Notifier
@@ -30,12 +30,16 @@ class MQNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
             return AsyncNotifier(*args, notifier_class=cls, **kwargs)
         return super().__new__(cls)
 
-    def __init__(self, queue_name, exchange_name=None, routing_key=None):
+    def __init__(self, queue_name, exchange_name=None, routing_key=None, connection_manager=None):
         self.queue_name = queue_name
         self.exchange_name = exchange_name or 'amq.direct'
         self.routing_key = routing_key or queue_name
         self.properties = None
-        self.connection_manager = MQLocMemClient()  # fake client by default
+
+        if not connection_manager:
+            self.connection_manager = MQLocMemClient()  # fake client by default
+        else:
+            self.connection_manager = connection_manager
 
     @property
     def channel(self):
