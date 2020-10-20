@@ -6,5 +6,6 @@ from .mq_notifier import MQNotifier
 from .mq_locmem_client import MQLocMemClient
 from .segment_notifier import SegmentNotifier
 from .segment_locmem_client import SegmentLocMemClient
-# from .slack_notifier import SlackNotifier
+from .slack_notifier import SlackNotifier
+from .slack_locmem_client import SlackLocMemClient
 # from .sms_notifier import SMSNotifier
