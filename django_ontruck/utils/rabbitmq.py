@@ -37,7 +37,7 @@ class RabbitMQConnectionManager(object):
 
 def rabbitmq_connection_params(user, password, host, **kwargs):
     port = int(kwargs.get('port', 5672))
-    heatbeat = int(kwargs.get('heartbeat', 600))
+    heartbeat = int(kwargs.get('heartbeat', 600))
     blocking_connection_timeout = int(kwargs.get('blocking_connection_timeout', 300))
     connection_attempts = int(kwargs.get('connection_attempts', 3))
 
