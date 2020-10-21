@@ -27,11 +27,6 @@ class SlackNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
 
     @property
     @abstractmethod
-    def client(self):
-        raise NotImplementedError()
-
-    @property
-    @abstractmethod
     def channel(self):
         raise NotImplementedError()
 

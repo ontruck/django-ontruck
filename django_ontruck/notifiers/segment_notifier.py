@@ -1,6 +1,5 @@
 from abc import ABC
 from datetime import datetime
-from analytics import Client
 
 from .notifier import Notifier
 from .async_notifier import AsyncNotifier, MetaDelayedNotifier
@@ -28,25 +27,17 @@ class SegmentNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
         else:
             return super().__new__(cls)
 
-    def __init__(self, user=None, timestamp=None, client=None):
+    def __init__(self, user=None, timestamp=None):
         self.timestamp = datetime.now() if not timestamp else timestamp
         self.user = user
-
-        if client:
-            SegmentNotifier.client_pool[client.write_key] = client
 
     @property
     def segment_key(self):
         return None
 
     @property
-    def segment_client(self):
-        key = self.segment_key
-        if not key:
-            client = SegmentLocMemClient(key)
-        else:
-            client = Client(key)
-        return SegmentNotifier.client_pool.setdefault(key, client)
+    def client(self):
+        return SegmentLocMemClient(None)
 
     @property
     def identify_properties(self):
@@ -65,7 +56,7 @@ class SegmentNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
             return
 
         if self.identify_properties:
-            self.segment_client.identify(self.uuid, self.identify_properties)
+            self.client.identify(self.uuid, self.identify_properties)
 
         if self.event_id:
-            self.segment_client.track(self.uuid, self.event_id, timestamp=self.timestamp, properties=self.message)
+            self.client.track(self.uuid, self.event_id, timestamp=self.timestamp, properties=self.message)

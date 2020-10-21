@@ -96,6 +96,10 @@ class AsyncNotifier(Notifier):
     def notifier_class_path(self):
         return '.'.join([self.notifier_class.__module__, self.notifier_class.__name__])
 
+    @property
+    def client(self):
+        return None
+
     def send(self):
         if self.notifier_class:
             celery_opts = {

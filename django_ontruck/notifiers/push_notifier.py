@@ -31,6 +31,10 @@ class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
         self.driver_id = driver_id
 
     @property
+    def client(self):
+        return None  # clients are managed by device providers
+
+    @property
     @abstractmethod
     def category(self):
         raise NotImplementedError()
