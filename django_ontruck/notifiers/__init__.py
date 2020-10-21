@@ -9,3 +9,4 @@ from .segment_locmem_client import SegmentLocMemClient
 from .slack_notifier import SlackNotifier
 from .slack_locmem_client import SlackLocMemClient
 from .sms_notifier import SMSNotifier
+from .sms_locmem_client import SmsLocMemClient

@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from .notifier import Notifier
+from .sms_locmem_client import SmsLocMemClient
 from .async_notifier import AsyncNotifier, MetaDelayedNotifier
 
 
@@ -22,9 +23,8 @@ class SMSNotifier(Notifier, metaclass=MetaDelayedNotifier):
         self.phone = phone
 
     @property
-    @abstractmethod
     def client(self):
-        raise NotImplementedError()
+        return SmsLocMemClient()
 
     @property
     @abstractmethod
