@@ -112,6 +112,44 @@ Views
 
 Collections of DRF views extended to fit with BaseModel and UseCases
 
+***************
+Value Objects
+***************
+
+Objects for which equality is determined by their attributes as opposed to by identity.
+That is, they are **fungible**: one instance of an object can be swapped for
+any other instance as long as their attributes are the same (much like coins, or stamps.)
+
+Money
+-----
+The `Money` class represents a monetary value together with its currency.
+
+- The value is stored without rounding until the `allocate` method is invoked. How rounding is performed depends on the currency.
+
+.. code-block:: python
+
+   from django_ontruck.value_objects.money import euros, pounds, Currencies, money, Currency
+
+   # commonly used currencies have their own helpers:
+   two_euros = euros('2.00')  # 50.00 €
+   one_hundred_pounds = pounds('100.00') # £100.00
+
+   # Other currencies can be created using the `money` helper and the currency
+   twenty_zloty = money(Currencies.PLN, '20')
+
+   # Any missing currencies can be created
+   alt = Currency('ALT', 'Altarian Dollars', '$')
+   one_altarian_dollar = money(alt, '1')
+
+   # We can apply arithmetic operations and the value is stored without rounding.
+   divided = two_euros / 3
+   divided.amount  # Decimal('0.6666666666666666666666666667'))
+
+   # We can round the value (according to the currency) using `allocate`
+   divided.allocate().amount  # Decimal('0.67'))
+
+
+
 *********
 Testing
 *********
@@ -119,7 +157,7 @@ Testing
 Utils for testing.
 
 Patch transactions and run transaction.on_commit
--------------------------------------------
+------------------------------------------------
 
 
 
