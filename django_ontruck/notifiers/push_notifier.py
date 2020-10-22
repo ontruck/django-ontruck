@@ -1,15 +1,9 @@
 import json
-import logging
 from abc import ABC, abstractmethod
-
-from push_notifications.webpush import WebPushError
 
 from .push.device import Device
 from .async_notifier import AsyncNotifier, MetaDelayedNotifier
 from .notifier import Notifier
-
-
-logger = logging.getLogger(__name__)
 
 
 class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
@@ -64,17 +58,12 @@ class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
             if device_type == Device.WEB:
                 web_json = json.dumps(msg.to_dict())
                 for device in devices:
-                    try:
-                        device.send_message(web_json)
-                    except WebPushError as e:
-                        result = str(e)
-                        if any(code in result for code in ['404', '410']):
-                            # remove device from db
-                            device.delete()
-                        else:
-                            logger.error(e)
+                    self.send_web_device(device, web_json)
             else:
                 devices.send_message(**msg.to_dict())
+
+    def send_web_device(self, device, web_json):
+        device.send_message(web_json)
 
     def devices(self, device_provider):
         return device_provider.objects.filter(user__driver_id=self.driver_id)
