@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 class MQNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
     __slots__ = ('queue_name', 'exchange_name', 'routing_key', 'connection_manager', )
+    async_class = AsyncNotifier
 
     @classmethod
     def is_default_delayed(cls):
@@ -21,7 +22,7 @@ class MQNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
         is_delayed = kwargs.pop('delayed', False)
 
         if is_delayed:
-            return AsyncNotifier(*args, notifier_class=cls, **kwargs)
+            return cls.async_class(*args, notifier_class=cls, **kwargs)
         return super().__new__(cls)
 
     def __init__(self, queue_name, exchange_name=None, routing_key=None):

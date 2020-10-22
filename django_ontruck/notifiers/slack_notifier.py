@@ -8,6 +8,7 @@ from .slack_locmem_client import SlackLocMemClient
 
 class SlackNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
     slack_client = None
+    async_class = AsyncNotifier
 
     @classmethod
     def is_default_delayed(cls):
@@ -17,7 +18,7 @@ class SlackNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
         is_delayed = kwargs.pop('delayed', False)
 
         if is_delayed:
-            return AsyncNotifier(*args, notifier_class=cls, **kwargs)
+            return cls.async_class(*args, notifier_class=cls, **kwargs)
         else:
             return super().__new__(cls)
 

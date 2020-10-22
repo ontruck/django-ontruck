@@ -1,8 +1,6 @@
 import sys
 import logging
 from django.conf import settings
-from celery import shared_task
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
@@ -10,23 +8,6 @@ from .notifier import Notifier
 
 
 logger = logging.getLogger(__name__)
-
-
-# IMPORTANT: do not use this function outside this scope
-@shared_task
-def send_async_notification(notifier_class_path, *args, **kwargs):
-    if (notifier_class := load_class(notifier_class_path)) is None:
-        return
-
-    try:
-        # instantiate objects from IDs
-        _args, _kwargs = from_primitives(*args, **kwargs)
-        if notifier_class.is_default_delayed():
-            _kwargs['delayed'] = False
-        notifier = notifier_class(*_args, **_kwargs)
-        notifier.send()
-    except ObjectDoesNotExist:
-        pass
 
 
 def load_class(class_path):
@@ -96,10 +77,6 @@ class AsyncNotifier(Notifier):
     def notifier_class_path(self):
         return '.'.join([self.notifier_class.__module__, self.notifier_class.__name__])
 
-    @property
-    def client(self):
-        return None
-
     def send(self):
         if self.notifier_class:
             celery_opts = {
@@ -115,7 +92,7 @@ class AsyncNotifier(Notifier):
             # transform object instances into IDs
             _args, _kwargs = to_primitives(*self.notifier_args, **self.notifier_kwargs)
 
-            return send_async_notification.s(self.notifier_class_path, *_args, **_kwargs).apply_async(**celery_opts)
+            return self.client.s(self.notifier_class_path, *_args, **_kwargs).apply_async(**celery_opts)
 
 
 class MetaDelayedNotifier(type(Notifier)):

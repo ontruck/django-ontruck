@@ -10,6 +10,7 @@ class SegmentNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
     __slots__ = ('timestamp', 'user', )
     client_pool = {}
     event_id = None
+    async_class = AsyncNotifier
 
     @classmethod
     def is_default_delayed(cls):
@@ -23,7 +24,7 @@ class SegmentNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
         if is_delayed:
             # Get timestamp when the event was created by allow passing it or having a default one
             kwargs.setdefault('timestamp', instance.timestamp)
-            return AsyncNotifier(*args, notifier_class=cls, **kwargs)
+            return cls.async_class(*args, notifier_class=cls, **kwargs)
         else:
             return super().__new__(cls)
 

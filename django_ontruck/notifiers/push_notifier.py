@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
     __slots__ = ('driver_id',)
+    async_class = AsyncNotifier
 
     @classmethod
     def is_default_delayed(cls):
@@ -23,7 +24,7 @@ class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
         is_delayed = kwargs.pop('delayed', False)
 
         if is_delayed:
-            return AsyncNotifier(*args, notifier_class=cls, **kwargs)
+            return cls.async_class(*args, notifier_class=cls, **kwargs)
         else:
             return super().__new__(cls)
 
