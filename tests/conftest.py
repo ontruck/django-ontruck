@@ -6,7 +6,7 @@ from django_ontruck.test import PatchedAtomic
 from .test_app.use_cases import FooCreateUseCase
 from .test_app.queries import CountFooQuery
 from .test_app.events import FooEvent
-from .test_app.models import FooModel
+from .test_app.models import FooModel, BarModel, FoobarModel
 
 
 @pytest.fixture(autouse=True)
@@ -34,9 +34,21 @@ def foo_event():
 def user():
     return User.objects.create_user(username='test_user')
 
+
 @pytest.fixture
 def foo_model():
     return FooModel.objects.create(title='title')
+
+
+@pytest.fixture
+def bar_model():
+    return BarModel.objects.create(name='sample')
+
+
+@pytest.fixture
+def foobar_model():
+    return FoobarModel.objects.create(quantity=3)
+
 
 @pytest.fixture
 def foo_query():

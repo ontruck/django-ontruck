@@ -1,13 +1,10 @@
 from abc import abstractmethod, ABC
-import logging
 import json
 from django_ontruck.utils.retry import retry
 
 from .mq_locmem_client import MQLocMemClient
 from .notifier import Notifier
 from .async_notifier import AsyncNotifier, MetaDelayedNotifier
-
-logger = logging.getLogger(__name__)
 
 
 class MQNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
@@ -43,19 +40,15 @@ class MQNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
 
     @retry(tries=3, delay=1, backoff=2)
     def send(self):
-        try:
-            if isinstance(self.message, dict):
-                msg = json.dumps(self.message)
-            elif self.message and self.message.is_valid():
-                msg = json.dumps(self.message.serialize())
-            else:
-                return
+        if isinstance(self.message, dict):
+            msg = json.dumps(self.message)
+        elif self.message and self.message.is_valid():
+            msg = json.dumps(self.message.serialize())
+        else:
+            return
 
-            self.channel.basic_publish(
-                exchange=self.exchange_name,
-                routing_key=self.routing_key,
-                body=msg,
-                properties=self.properties)
-        except Exception as e:
-            logger.exception(e)
-            raise e
+        self.channel.basic_publish(
+            exchange=self.exchange_name,
+            routing_key=self.routing_key,
+            body=msg,
+            properties=self.properties)

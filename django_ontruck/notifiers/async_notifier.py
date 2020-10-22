@@ -1,6 +1,5 @@
 import sys
 import logging
-from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
@@ -65,6 +64,7 @@ def from_primitives(*args, **kwargs):
 
 class AsyncNotifier(Notifier):
     __slots__ = ('notifier_class', 'notifier_args', 'notifier_kwargs',)
+    default_queue = 'celery.notifications'
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('client', None)  # skip client
@@ -80,7 +80,7 @@ class AsyncNotifier(Notifier):
     def send(self):
         if self.notifier_class:
             celery_opts = {
-                'queue': settings.CELERY_NOTIFICATIONS_QUEUE,
+                'queue': self.default_queue,
                 'shadow': self.notifier_class_path
             }
 

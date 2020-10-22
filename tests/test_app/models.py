@@ -7,3 +7,11 @@ class FooModel(BaseModel):
     title = models.CharField(max_length=50)
     extra = models.CharField(max_length=50, blank=True)
     pre_serializer = models.CharField(max_length=50, blank=True, null=True)
+
+
+class BarModel(BaseModel):
+    name = models.CharField(max_length=50)
+
+
+class FoobarModel(BaseModel):
+    quantity = models.IntegerField()
