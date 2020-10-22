@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from pytest import fixture
 
-from django_ontruck.serializers import DictSort, SortedJSONField
+from django_ontruck.serializers import SortedJSONField
 
 
 class TestSerializers:
@@ -34,16 +34,6 @@ class TestSerializers:
             ),
             ('B', 2,)
         ))
-
-    class TestDictSort:
-        @fixture
-        def dict_sort(self):
-            return DictSort(sort_method=sorted)
-
-        def test_it_sorts_the_dict_in_alphabetical_order_of_keys(
-            self, dict_to_sort, dict_sort, sorted_dict
-        ):
-            assert dict_sort(dict_to_sort) == sorted_dict
 
     class TestSortedJSONField:
         @fixture
