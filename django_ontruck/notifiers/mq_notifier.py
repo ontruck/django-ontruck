@@ -1,6 +1,5 @@
 from abc import abstractmethod, ABC
 import json
-from django_ontruck.utils.retry import retry
 
 from .mq_locmem_client import MQLocMemClient
 from .notifier import Notifier
@@ -38,7 +37,6 @@ class MQNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
     def message(self):
         raise NotImplementedError()
 
-    @retry(tries=3, delay=1, backoff=2)
     def send(self):
         if isinstance(self.message, dict):
             msg = json.dumps(self.message)
