@@ -89,6 +89,24 @@ Base model to track some CRUD dates and author. Safe delete is implemented.
 
 
 *********
+Notifiers
+*********
+
+Base classes to notify events to 3rd party systems like Slack, Segment, etc.
+
+
+.. code-block:: python
+
+    from django.db import models
+    from django_ontruck.notifiers.segment import SegmentNotifier
+    from django_ontruck.notifiers import AsyncNotifier
+
+    class FooNotifier(segmentNotifier):
+        async_class = AsyncNotifier
+        event_id = 'test_event'
+
+
+*********
 Views
 *********
 
