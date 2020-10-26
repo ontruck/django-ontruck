@@ -3,6 +3,12 @@
 History
 -------
 
+0.8.0 (2020-10-26)
+++++++++++++++++++
+
+* Remove support for python < 3.8
+* Add base classes for notifiers
+
 0.7.0 (2020-6-10)
 +++++++++++++++++
 
