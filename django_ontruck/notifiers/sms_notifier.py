@@ -5,7 +5,7 @@ from .async_notifier import AsyncNotifier, MetaDelayedNotifier
 
 
 class SMSNotifier(Notifier, metaclass=MetaDelayedNotifier):
-    __slots__ = ('phone',)
+    __slots__ = ('phone_number',)
     async_class = AsyncNotifier
 
     @classmethod
@@ -20,8 +20,8 @@ class SMSNotifier(Notifier, metaclass=MetaDelayedNotifier):
         else:
             return super().__new__(cls)
 
-    def __init__(self, phone):
-        self.phone = phone
+    def __init__(self, phone_number):
+        self.phone_number = phone_number
 
     @property
     def client(self):
@@ -39,7 +39,7 @@ class SMSNotifier(Notifier, metaclass=MetaDelayedNotifier):
 
     def send(self):
         smsparams = {
-            'to': self.phone,
+            'to': self.phone_number,
             'message': self.message,
             'from_': self.sender_name,
         }
