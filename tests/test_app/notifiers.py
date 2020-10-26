@@ -84,6 +84,11 @@ class DummyPushNotifier(PushNotifier):
     def message(self, device_type):
         return DummyMessage(device_type=device_type, category=self.category)
 
+    def devices(self, device_type):
+        d = MagicMock()
+        d.send_message.return_value = None
+        return d
+
 
 class DummySegmentNotifier(SegmentNotifier):
     async_class = DummyAsyncNotifier

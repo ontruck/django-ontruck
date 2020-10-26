@@ -7,7 +7,6 @@ from .notifier import Notifier
 
 
 class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
-    __slots__ = ('driver_id',)
     async_class = AsyncNotifier
 
     @classmethod
@@ -21,9 +20,6 @@ class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
             return cls.async_class(*args, notifier_class=cls, **kwargs)
         else:
             return super().__new__(cls)
-
-    def __init__(self, driver_id):
-        self.driver_id = driver_id
 
     @property
     def client(self):
@@ -40,11 +36,15 @@ class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
 
     @abstractmethod
     def is_available_for_device_type(self, device_type):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     def provider_class_for(self, device_type):
-        raise NotImplementedError
+        raise NotImplementedError()
+
+    @abstractmethod
+    def devices(self, device_provicer):
+        raise NotImplementedError()
 
     def send(self):
         device_types = [device_type for _, device_type in Device.__members__.items() if
@@ -64,6 +64,3 @@ class PushNotifier(Notifier, ABC, metaclass=MetaDelayedNotifier):
 
     def send_web_device(self, device, web_json):
         device.send_message(web_json)
-
-    def devices(self, device_provider):
-        return device_provider.objects.filter(user__driver_id=self.driver_id)
