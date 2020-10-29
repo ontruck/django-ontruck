@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import OrderedDict
+from collections import OrderedDict, Sequence, Mapping
 from dataclasses import dataclass
 from enum import Enum
 from typing import Hashable, Iterable
@@ -104,7 +104,7 @@ class DictDiff(Diff):
 
 
 def is_scalar(value):
-    return not isinstance(value, dict)
+    return not isinstance(value, (Mapping, Sequence))
 
 
 class Comparison:
@@ -159,6 +159,13 @@ class DictDiffBuilder(Builder):
         )
 
 
+def adapt_to_mapping(mapping_or_sequence):
+    if isinstance(mapping_or_sequence, Mapping):
+        return mapping_or_sequence
+
+    return {index: item for index, item in enumerate(mapping_or_sequence)}
+
+
 class DiffDicts:
     def __init__(self, sort_method):
         self.sort_method = sort_method
@@ -172,6 +179,8 @@ class DiffDicts:
                 return
 
     def _enqueue(self, left, right, builder):
+        left, right = adapt_to_mapping(left), adapt_to_mapping(right)
+
         self._queue.extend(
             [
                 (comparison, builder)
