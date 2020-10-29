@@ -211,14 +211,18 @@ class DiffDicts:
             self._enqueue(comparison.left, comparison.right, next_builder)
 
     def __call__(self, left, right):
-        builder = DictDiffBuilder()
+        try:
+            builder = DictDiffBuilder()
 
-        self._enqueue(left, right, builder)
+            self._enqueue(left, right, builder)
 
-        for comparison, current_builder in self._comparisons():
-            self._handle_comparison(comparison, current_builder)
+            for comparison, current_builder in self._comparisons():
+                self._handle_comparison(comparison, current_builder)
 
-        return builder.build()
+            return builder.build()
+
+        finally:
+            self._queue = []
 
 
 def diff_dicts(left, right, sort_method=sorted):
