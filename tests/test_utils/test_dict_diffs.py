@@ -18,7 +18,10 @@ def left():
             },
             'e': 3,
         },
-        'f': 4
+        'f': 4,
+        'i': [
+            7
+        ]
     }
 
 
@@ -34,7 +37,10 @@ def right():
         'f': {
             'h': 6
         },
-        'g': 5
+        'g': 5,
+        'i': [
+            8, 9
+        ]
     }
 
 
@@ -63,7 +69,18 @@ def test_diff_dict(left, right):
                     )
                 ),
                 ('f', Modification(4, {'h': 6})),
-                ('g', Addition(5))
+                ('g', Addition(5)),
+                (
+                    'i',
+                    DictDiff(
+                        OrderedDict(
+                            [
+                                (0, Modification(7, 8)),
+                                (1, Addition(9))
+                            ]
+                        )
+                    )
+                )
             ]
         )
     )
@@ -87,11 +104,13 @@ def test_iteration(left, right):
         (KeyPath('a', 'b', 'd'), Deletion(2)),
         (KeyPath('f'), Modification(4, {'h': 6})),
         (KeyPath('g'), Addition(5)),
+        (KeyPath('i', 0), Modification(7, 8)),
+        (KeyPath('i', 1), Addition(9)),
     ]
 
 
 def test_len(left, right):
-    assert len(diff_dicts(left, right)) == 4
+    assert len(diff_dicts(left, right)) == 6
 
 
 def test_key_lookup(left, right):
@@ -111,6 +130,8 @@ def test_str(left, right):
             [ - ] /a/b/d : left: 2 | right:{' '}
             [ * ] /f : left: 4 | right: {{'h': 6}}
             [ + ] /g : left:  | right: 5
+            [ * ] /i/0 : left: 7 | right: 8
+            [ + ] /i/1 : left:  | right: 9
             '''
         ).strip()
     )
