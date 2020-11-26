@@ -3,6 +3,11 @@
 History
 -------
 
+0.10.0 (2020-11-26)
++++++++++++++++++++
+
+* Extend diff_dicts method do account for sequences
+
 0.9.0 (2020-10-27)
 ++++++++++++++++++
 
