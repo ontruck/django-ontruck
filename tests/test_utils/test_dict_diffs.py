@@ -21,7 +21,10 @@ def left():
         'f': 4,
         'i': [
             7
-        ]
+        ],
+        'j': [
+            'ABCDEF'
+        ],
     }
 
 
@@ -40,6 +43,9 @@ def right():
         'g': 5,
         'i': [
             8, 9
+        ],
+        'j': [
+            'XYZ'
         ]
     }
 
@@ -80,7 +86,17 @@ def test_diff_dict(left, right):
                             ]
                         )
                     )
-                )
+                ),
+                (
+                    'j',
+                    DictDiff(
+                        OrderedDict(
+                            [
+                                (0, Modification('ABCDEF', 'XYZ'))
+                            ]
+                        )
+                    )
+                ),
             ]
         )
     )
@@ -106,11 +122,12 @@ def test_iteration(left, right):
         (KeyPath('g'), Addition(5)),
         (KeyPath('i', 0), Modification(7, 8)),
         (KeyPath('i', 1), Addition(9)),
+        (KeyPath('j', 0), Modification('ABCDEF', 'XYZ'))
     ]
 
 
 def test_len(left, right):
-    assert len(diff_dicts(left, right)) == 6
+    assert len(diff_dicts(left, right)) == 7
 
 
 def test_key_lookup(left, right):
@@ -120,20 +137,24 @@ def test_key_lookup(left, right):
     assert diff['a']['b']['d'] == Deletion(2)
     assert diff['f'] == Modification(4, {'h': 6})
     assert diff['g'] == Addition(5)
+    assert diff['i'][0] == Modification(7, 8)
+    assert diff['i'][1] == Addition(9)
+    assert diff['j'][0] == Modification('ABCDEF', 'XYZ')
 
 
 def test_str(left, right):
     assert (
         str(diff_dicts(left, right)) == dedent(
-            f'''
+        f'''
             [ * ] /a/b/c : left: 1 | right: 11
             [ - ] /a/b/d : left: 2 | right:{' '}
             [ * ] /f : left: 4 | right: {{'h': 6}}
             [ + ] /g : left:  | right: 5
             [ * ] /i/0 : left: 7 | right: 8
             [ + ] /i/1 : left:  | right: 9
+            [ * ] /j/0 : left: ABCDEF | right: XYZ
             '''
-        ).strip()
+    ).strip()
     )
 
 

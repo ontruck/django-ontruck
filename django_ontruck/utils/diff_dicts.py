@@ -104,7 +104,16 @@ class DictDiff(Diff):
 
 
 def is_scalar(value):
-    return not isinstance(value, (Mapping, Sequence))
+    if isinstance(value, Mapping):
+        return False
+
+    elif not isinstance(value, Sequence):
+        return True
+
+    try:
+        return value[0][0] == value[0]
+    except (TypeError, IndexError):
+        return False
 
 
 class Comparison:
