@@ -4,7 +4,7 @@ from textwrap import dedent
 from pytest import fixture, mark
 
 from django_ontruck.utils.diff_dicts import (
-    Modification, Deletion, Addition, diff_dicts, DictDiff, KeyPath
+    Modification, Deletion, Addition, diff_dicts, DictDiff, KeyPath, missing
 )
 
 
@@ -21,7 +21,10 @@ def left():
         'f': 4,
         'i': [
             7
-        ]
+        ],
+        'j': [
+            'ABCDEF'
+        ],
     }
 
 
@@ -40,6 +43,9 @@ def right():
         'g': 5,
         'i': [
             8, 9
+        ],
+        'j': [
+            'XYZ'
         ]
     }
 
@@ -80,7 +86,17 @@ def test_diff_dict(left, right):
                             ]
                         )
                     )
-                )
+                ),
+                (
+                    'j',
+                    DictDiff(
+                        OrderedDict(
+                            [
+                                (0, Modification('ABCDEF', 'XYZ'))
+                            ]
+                        )
+                    )
+                ),
             ]
         )
     )
@@ -106,11 +122,12 @@ def test_iteration(left, right):
         (KeyPath('g'), Addition(5)),
         (KeyPath('i', 0), Modification(7, 8)),
         (KeyPath('i', 1), Addition(9)),
+        (KeyPath('j', 0), Modification('ABCDEF', 'XYZ'))
     ]
 
 
 def test_len(left, right):
-    assert len(diff_dicts(left, right)) == 6
+    assert len(diff_dicts(left, right)) == 7
 
 
 def test_key_lookup(left, right):
@@ -120,20 +137,24 @@ def test_key_lookup(left, right):
     assert diff['a']['b']['d'] == Deletion(2)
     assert diff['f'] == Modification(4, {'h': 6})
     assert diff['g'] == Addition(5)
+    assert diff['i'][0] == Modification(7, 8)
+    assert diff['i'][1] == Addition(9)
+    assert diff['j'][0] == Modification('ABCDEF', 'XYZ')
 
 
 def test_str(left, right):
     assert (
         str(diff_dicts(left, right)) == dedent(
-            f'''
+        f'''
             [ * ] /a/b/c : left: 1 | right: 11
             [ - ] /a/b/d : left: 2 | right:{' '}
             [ * ] /f : left: 4 | right: {{'h': 6}}
             [ + ] /g : left:  | right: 5
             [ * ] /i/0 : left: 7 | right: 8
             [ + ] /i/1 : left:  | right: 9
+            [ * ] /j/0 : left: ABCDEF | right: XYZ
             '''
-        ).strip()
+    ).strip()
     )
 
 
@@ -147,3 +168,57 @@ def test_str(left, right):
 )
 def test_scalar_diffs_are_hashable(diff):
     assert hash(diff)
+
+
+def test_left(left, right):
+    assert diff_dicts(left, right).left == OrderedDict(
+        [
+            (
+                'a', OrderedDict(
+                    [
+                        (
+                            'b',
+                            OrderedDict([('c', 1), ('d', 2)])
+                        )
+                    ]
+                )
+            ),
+            ('f', 4),
+            ('g', missing),
+            (
+                'i',
+                OrderedDict([(0, 7), (1, missing)])
+            ),
+            (
+                'j',
+                OrderedDict([(0, 'ABCDEF')])
+            )
+        ]
+    )
+
+
+def test_right(left, right):
+    assert diff_dicts(left, right).right == OrderedDict(
+        [
+            (
+                'a',
+                OrderedDict(
+                    [
+                        (
+                            'b',
+                            OrderedDict(
+                                [
+                                    ('c', 11),
+                                    ('d', missing)
+                                ]
+                            )
+                        )
+                    ]
+                )
+            ),
+            ('f', {'h': 6}),
+            ('g', 5),
+            ('i', OrderedDict([(0, 8), (1, 9)])),
+            ('j', OrderedDict([(0, 'XYZ')]))
+        ]
+    )
