@@ -3,6 +3,11 @@
 History
 -------
 
+0.10.1 (2020-11-27)
++++++++++++++++++++
+
+* Account for recursive Sequences (e.g. strings) in diff_dicts
+
 0.10.0 (2020-11-26)
 +++++++++++++++++++
 
