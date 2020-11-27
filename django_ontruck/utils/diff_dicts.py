@@ -137,16 +137,7 @@ class DictDiff(Diff):
 
 
 def is_scalar(value):
-    if isinstance(value, Mapping):
-        return False
-
-    elif not isinstance(value, Sequence):
-        return True
-
-    try:
-        return value[0][0] == value[0]
-    except (TypeError, IndexError):
-        return False
+    return not isinstance(value, (Mapping, Sequence)) or isinstance(value, str)
 
 
 class Comparison:
@@ -175,7 +166,7 @@ class Comparison:
 class Builder(ABC):
     @abstractmethod
     def build(self) -> Diff:  # pragma: no cover
-        pass
+        raise NotImplementedError()
 
 
 class ScalarBuilder(Builder):
