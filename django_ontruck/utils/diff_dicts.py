@@ -18,7 +18,17 @@ missing = Missing()
 class Diff(ABC):
     @abstractmethod
     def __iter__(self):  # pragma: no cover
-        pass
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def left(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def right(self):
+        raise NotImplementedError()
 
 
 class Symbol(Enum):
@@ -43,9 +53,17 @@ class KeyPath:
 
 class ScalarDiff(Diff, ABC):
     def __init__(self, left: object, right: object, symbol: Symbol):
-        self.left = left
-        self.right = right
+        self._left = left
+        self._right = right
         self.symbol = symbol
+
+    @property
+    def left(self):
+        return self._left
+
+    @property
+    def right(self):
+        return self._right
 
     def __iter__(self):
         yield KeyPath(), self
@@ -99,6 +117,21 @@ class DictDiff(Diff):
             f"[ {diff.symbol.value} ] {key} : {diff.description}"
             for key, diff in self
         )
+
+    def _partition(self, side):
+        return OrderedDict(
+            [
+                (key, getattr(diff, side)) for key, diff in self.items.items()
+            ]
+        )
+
+    @property
+    def left(self):
+        return self._partition('left')
+
+    @property
+    def right(self):
+        return self._partition('right')
 
     __repr__ = __str__
 
