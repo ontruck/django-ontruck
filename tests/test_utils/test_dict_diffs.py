@@ -4,7 +4,7 @@ from textwrap import dedent
 from pytest import fixture, mark
 
 from django_ontruck.utils.diff_dicts import (
-    Modification, Deletion, Addition, diff_dicts, DictDiff, KeyPath
+    Modification, Deletion, Addition, diff_dicts, DictDiff, KeyPath, missing
 )
 
 
@@ -168,3 +168,57 @@ def test_str(left, right):
 )
 def test_scalar_diffs_are_hashable(diff):
     assert hash(diff)
+
+
+def test_left(left, right):
+    assert diff_dicts(left, right).left == OrderedDict(
+        [
+            (
+                'a', OrderedDict(
+                    [
+                        (
+                            'b',
+                            OrderedDict([('c', 1), ('d', 2)])
+                        )
+                    ]
+                )
+            ),
+            ('f', 4),
+            ('g', missing),
+            (
+                'i',
+                OrderedDict([(0, 7), (1, missing)])
+            ),
+            (
+                'j',
+                OrderedDict([(0, 'ABCDEF')])
+            )
+        ]
+    )
+
+
+def test_right(left, right):
+    assert diff_dicts(left, right).right == OrderedDict(
+        [
+            (
+                'a',
+                OrderedDict(
+                    [
+                        (
+                            'b',
+                            OrderedDict(
+                                [
+                                    ('c', 11),
+                                    ('d', missing)
+                                ]
+                            )
+                        )
+                    ]
+                )
+            ),
+            ('f', {'h': 6}),
+            ('g', 5),
+            ('i', OrderedDict([(0, 8), (1, 9)])),
+            ('j', OrderedDict([(0, 'XYZ')]))
+        ]
+    )
