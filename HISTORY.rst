@@ -3,6 +3,11 @@
 History
 -------
 
+0.10.2 (2020-11-27)
++++++++++++++++++++
+
+* Simplify definition of scalar when diffing dicts
+
 0.10.1 (2020-11-27)
 +++++++++++++++++++
 
