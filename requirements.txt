@@ -1,2 +1,3 @@
 
 # Additional requirements go here
+celery==4.4.4
