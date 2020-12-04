@@ -47,7 +47,7 @@ class ConsumerBase(bootsteps.ConsumerStep):
         except Exception as e:
             message.requeue()
 
-            if settings.SENTRY_DSN:
+            if hasattr(settings, 'SENTRY_DSN'):
                 from sentry_sdk import capture_exception
 
                 capture_exception(e)
