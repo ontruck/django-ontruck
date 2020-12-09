@@ -1,11 +1,18 @@
 from abc import ABCMeta, abstractmethod
+import json
+import logging
 from celery import bootsteps
 from kombu import Consumer, Exchange, Queue
 from django.conf import settings
 
 
+logger = logging.getLogger(__name__)
+
+
 class ConsumerBase(bootsteps.ConsumerStep):
     __metaclass__ = ABCMeta
+    serializer_class = None
+    use_case_class = None
 
     @property
     @abstractmethod
@@ -26,9 +33,25 @@ class ConsumerBase(bootsteps.ConsumerStep):
     def tag_prefix(self):
         return None
 
-    @abstractmethod
     def perform(self, body, message):
-        raise NotImplementedError('missing perform')
+        if isinstance(body, str):
+            body = json.loads(body)
+
+        if self.serializer_class and self.use_case_class:
+            serializer = self.serializer_class(data=body)
+
+            if serializer.is_valid():
+                use_case = self.use_case_class()
+                use_case.execute(command=serializer.validated_data)
+
+                message.ack()
+            else:
+                message.reject()
+                logger.error(f"Failed to process message {serializer.errors=}")
+        else:
+            raise NotImplementedError(
+                'You have to specify a serializer_class and a use_case_class or implement perform method'
+            )
 
     def get_consumers(self, channel):
         queue = Queue(self.queue_name, Exchange(self.exchange_name), routing_key=self.routing_key)
