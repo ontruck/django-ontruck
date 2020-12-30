@@ -1,7 +1,21 @@
 from django.utils.timezone import now
 from rest_framework.pagination import PageNumberPagination, _positive_int
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, viewsets, status, renderers
 from rest_framework.response import Response
+
+
+class NoBrowsableAPIRenderer:
+    def get_renderers(self):
+        """
+        Remove Browsable API renderer if user is no staff.
+        """
+        rends = self.renderer_classes
+        if self.request and self.request.user and self.request.user.is_staff:
+            rends.append(renderers.BrowsableAPIRenderer)
+        else:
+            if renderers.BrowsableAPIRenderer in rends:
+                rends.remove(renderers.BrowsableAPIRenderer)
+        return [renderer() for renderer in rends]
 
 
 class OntruckPagination(PageNumberPagination):

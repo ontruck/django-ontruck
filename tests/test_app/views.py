@@ -1,4 +1,9 @@
-from django_ontruck.views import OntruckDelViewSet, OntruckViewSet, OntruckUseCaseViewSet
+from django_ontruck.views import (
+    OntruckDelViewSet, OntruckViewSet, OntruckUseCaseViewSet,
+    NoBrowsableAPIRenderer,
+)
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from .models import FooModel
 from .serializers import FooSerializer
@@ -67,4 +72,8 @@ class FooOntruckUseCaseViewSet(OntruckUseCaseViewSet):
         command['extra'] = 'extra_update_use_case'
         return command
 
+
+class FooNoBrowsableViewSet(NoBrowsableAPIRenderer, APIView):
+    def get(self, request, *args, **kwargs):
+        return Response({'browsable': False})
 
