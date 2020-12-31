@@ -3,6 +3,11 @@
 History
 -------
 
+0.11.1 (2020-12-31)
++++++++++++++++++++
+
+* Add NoBrowsableAPIRenderer view mixin class
+
 0.11.0 (2020-12-09)
 +++++++++++++++++++
 
