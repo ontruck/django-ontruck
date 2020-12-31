@@ -1,14 +1,14 @@
 import json
 
-from pytest import fixture, mark
+from pytest import mark
 
-from django.db import models
-from django.contrib.auth.models import User
-
+from rest_framework import renderers
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
-
-from .test_app.views import FooOntruckDelViewSet, FooOntruckViewSet, FooOntruckUseCaseViewSet
+from .test_app.views import (
+    FooOntruckDelViewSet, FooOntruckViewSet, FooOntruckUseCaseViewSet,
+    FooNoBrowsableViewSet,
+)
 from .test_app.models import FooModel
 from django_ontruck.views import OntruckPagination
 
@@ -228,3 +228,23 @@ class TestViews:
 
         response = my_view(request)
         assert response.status_code == 200
+
+    @mark.django_db
+    def test_no_browsable_api(self, user):
+        request = factory.get('/', '', content_type='application/json')
+        request.user = user
+
+        # If user is not staff, then API should not be browsable
+        nobrowsable = FooNoBrowsableViewSet()
+        nobrowsable.setup(request)
+        nobrowsable_renders = nobrowsable.get_renderers()
+
+        assert not any([isinstance(r, renderers.BrowsableAPIRenderer) for r in nobrowsable_renders])
+
+        # If user is staff, then API should be browsable
+        user.is_staff = True
+        browsable = FooNoBrowsableViewSet()
+        browsable.setup(request)
+        browsable_renders = browsable.get_renderers()
+
+        assert any([isinstance(r, renderers.BrowsableAPIRenderer) for r in browsable_renders])
