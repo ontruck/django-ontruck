@@ -1,4 +1,5 @@
 import inspect
+import weakref
 
 from django.core.management.base import BaseCommand
 from django.apps import apps
@@ -21,8 +22,14 @@ class Command(BaseCommand):
                         self.stdout.write('[{}]:'.format(self.style.WARNING(app.name)))
                         found = True
                     self.stdout.write(' * {} -> {}'.format(self.style.SUCCESS(e.__name__), e.signal.providing_args))
-                    for receiver in e.signal.receivers:
-                        _, receiver = receiver
-                        func = receiver()
-                        self.stdout.write('   - {}.{}'.format(self.style.ERROR(inspect.getsourcefile(func)),
-                                                              self.style.ERROR(func.__qualname__)))
+                    for _, receiver in e.signal.receivers:
+                        self.write_receiver(receiver)
+
+    def write_receiver(self, receiver):
+        if isinstance(receiver, weakref.ref):
+            receiver = receiver()
+
+        self.stdout.write(
+            f'   - {self.style.ERROR(inspect.getsourcefile(receiver))}.'
+            f'{self.style.ERROR(receiver.__qualname__)}'
+        )
