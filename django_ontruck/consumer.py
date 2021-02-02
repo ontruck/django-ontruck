@@ -4,9 +4,23 @@ import logging
 from celery import bootsteps
 from kombu import Consumer, Exchange, Queue
 from django.conf import settings
+from django.db import connections, DatabaseError
+from django.db.utils import InterfaceError
 
 
 logger = logging.getLogger(__name__)
+
+
+def assure_db_connection(body, message):
+    for conn in connections.all():
+        try:
+            conn.close_if_unusable_or_obsolete()
+        except InterfaceError:
+            pass
+        except DatabaseError as exc:
+            str_exc = str(exc)
+            if 'closed' not in str_exc and 'not connected' not in str_exc:
+                raise
 
 
 class ConsumerBase(bootsteps.ConsumerStep):
@@ -59,7 +73,7 @@ class ConsumerBase(bootsteps.ConsumerStep):
             Consumer(
                 channel,
                 queues=[queue],
-                callbacks=[self.handle_message],
+                callbacks=[assure_db_connection, self.handle_message],
                 accept=['json', 'application/json'],
                 tag_prefix=self.tag_prefix),
         ]
