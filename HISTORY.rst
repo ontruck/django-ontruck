@@ -3,6 +3,11 @@
 History
 -------
 
+0.11.2 (2021-2-1)
++++++++++++++++++++
+
+* Fix DB disconnections in base Consumer class
+
 0.11.1 (2020-12-31)
 +++++++++++++++++++
 
