@@ -10,3 +10,5 @@ from .slack_notifier import SlackNotifier
 from .slack_locmem_client import SlackLocMemClient
 from .sms_notifier import SMSNotifier
 from .sms_locmem_client import SmsLocMemClient
+from .customerio_notifier import CustomerIONotifier
+from .customerio_locmem_client import CustomerIOLocMemClient
