@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, Mock
 from django_ontruck.notifiers import (
-    AsyncNotifier, MQNotifier, PushNotifier, SegmentNotifier, SlackNotifier, SMSNotifier,
+    AsyncNotifier, MQNotifier, PushNotifier, SegmentNotifier, SlackNotifier, SMSNotifier, CustomerIONotifier,
 )
 from django_ontruck.notifiers.push import Message, Category
 
@@ -137,3 +137,23 @@ class DummySMSNotifier(SMSNotifier):
     @property
     def sender_name(self):
         return 'sender'
+
+
+class DummyCustomerIONotifier(CustomerIONotifier):
+    async_class = DummyAsyncNotifier
+
+    @property
+    def email_from(self) -> str:
+        return "test@ontruck.com"
+
+    @property
+    def email_to(self) -> str:
+        return "test@example.com"
+
+    @property
+    def subject(self) -> str:
+        return "this is a test"
+
+    @property
+    def message(self) -> str:
+        return "message"

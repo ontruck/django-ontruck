@@ -56,7 +56,9 @@ setup(
         'django_ontruck',
     ],
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        'customerio',
+    ],
     license="BSD",
     zip_safe=False,
     keywords='django-ontruck',
