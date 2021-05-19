@@ -5,11 +5,13 @@ logger = logging.getLogger(__name__)
 
 
 class SlackLocMemClient(object):
+    concurrent_worker = 'master'
 
     class SlackLocMemApi(object):
 
         def post(self, *args, **kwargs):
-            module.slack_outbox_api.append({'args': args, 'kwargs': kwargs})
+            caller = getattr(module, f'slack_outbox_api_{SlackLocMemClient.concurrent_worker}')
+            caller.append({'args': args, 'kwargs': kwargs})
 
     class SlackLocMemChat(object):
 
@@ -19,15 +21,21 @@ class SlackLocMemClient(object):
             options = dict(kwargs)
             options.pop('text', None)
             logger.info("SLACK CHAT: %s\n%s\nkwargs = %s", channel, message, options)
-            module.slack_outbox_chat.append({'args': args, 'kwargs': kwargs})
+
+            caller = getattr(module, f'slack_outbox_chat_{SlackLocMemClient.concurrent_worker}')
+            caller.append({'args': args, 'kwargs': kwargs})
 
     def __init__(self, *args, **kwargs):
         self._api = self.SlackLocMemApi()
         self._chat = self.SlackLocMemChat()
-        if not hasattr(module, 'slack_outbox_api'):
-            module.slack_outbox_api = []
-        if not hasattr(module, 'slack_outbox_chat'):
-            module.slack_outbox_chat = []
+
+        api_attr = f'slack_outbox_api_{SlackLocMemClient.concurrent_worker}'
+        chat_attr = f'slack_outbox_chat_{SlackLocMemClient.concurrent_worker}'
+
+        if not hasattr(module, api_attr):
+            setattr(module, api_attr, [])
+        if not hasattr(module, chat_attr):
+            setattr(module, chat_attr, [])
 
     @property
     def api(self, *args, **kwargs):
