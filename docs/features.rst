@@ -213,3 +213,33 @@ Start app with directory/files structure.
 .. code-block:: python
 
     python manage.py startontruckapp appname
+
+
+
+*********
+Monads
+*********
+
+We provide an implementation of useful monads.
+
+
+Result
+------
+
+Result monad is used to encapsulate return results whenever they are
+sucessful or not in order to treat the responses like a streamlined pipeline.
+
+.. code-block: python
+    result = my_use_case.execute(cmd, user)  # type: Result[int, str]
+
+    # result should contain a Journey id when Ok or a message when Error
+
+    res = result.and_then(get_journey_object) \       # get Journey model from ID
+                .and_then(prefetch_related_tables) \  # prefetch stuff
+                .and_then(serialize_response) \       # compose JSON response
+                .or_else(serialize_error)             # compose JSON response when error
+
+    if res.is_ok():
+        return Response(data=res.unwrap(), status_code=status.HTTP_200_OK)
+    else:
+        return Response(data=res.unwrap(), status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
