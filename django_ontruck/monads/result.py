@@ -16,17 +16,20 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
     """
     _inner_value: Union[ValueType, ErrorType]
 
+    def __bool__(self) -> bool:
+        return self.is_ok()
+
     @abstractmethod
     def is_ok(self) -> bool:
         """Returns True if `self` is an `Ok`
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def is_error(self) -> bool:
         """Returns True if `self` is an `Error`
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def and_then(
@@ -35,7 +38,7 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
         """Calls `fn` if the result is `Ok`, otherwise returns the `Error`
            value of `self`.
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def or_else(
@@ -44,13 +47,13 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
         """Calls `fn` if the result is `Error`, otherwise returns the `Ok`
            value of `self`
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def unwrap_or(self, default: ValueType) -> ValueType:
         """Returns a contained `Ok` value or a provided default.
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def unwrap_or_else(
@@ -58,7 +61,7 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
     ) -> ValueType:
         """Return the contained `Ok` value or computes it from a closure.
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def map(
@@ -67,7 +70,7 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
         """Maps Result(T, E) to Result(U, E) by applying a function to a
            contained `Ok` value, leaving an `Error` value untouched.
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def map_or(
@@ -78,7 +81,7 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
         """Applies a function to the contained value if `Ok`, or return the
            provided default if `Error`
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def map_or_else(
@@ -87,7 +90,7 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
         """Maps a Result(T, E) to U by applying a function to a contained `Ok`
            value, or a fallback function to a contained `Error` value.
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def map_err(
@@ -96,11 +99,11 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
         """Maps a Result(T, E) to Result(T, F) by applying a function to a
            contained `Error` value, leaving an `Ok` value untouched.
         """
-        return NotImplemented
+        raise NotImplementedError()
 
     @abstractmethod
     def unwrap(self) -> Union[ValueType, ErrorType]:
         """Returns the `Ok` value if `self` is `Ok` and the `Error` value if
            `self` is an `Error`
         """
-        return NotImplemented
+        raise NotImplementedError()

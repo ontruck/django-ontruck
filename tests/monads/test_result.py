@@ -23,6 +23,14 @@ def test_is_ok(result, expected):
 
 
 @pytest.mark.parametrize('result, expected', [
+    (Ok("this is a valid result"), True),
+    (Error("this is an error"), False)
+])
+def test_bool(result, expected):
+    assert bool(result) is expected
+
+
+@pytest.mark.parametrize('result, expected', [
     (Ok("this is a valid result"), False),
     (Error("this is an error"), True)
 ])
