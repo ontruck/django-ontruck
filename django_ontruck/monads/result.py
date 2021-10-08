@@ -72,6 +72,12 @@ class Result(Generic[ValueType, ErrorType], metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
+    def __or__(
+        self,
+        fn: Callable[[ValueType], Result[U, ErrorType]]
+    ) -> Union[Result[ValueType, ErrorType], Result[U, ErrorType]]:
+        return self.map(fn)
+
     @abstractmethod
     def map_or(
         self,
