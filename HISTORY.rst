@@ -3,6 +3,12 @@
 History
 -------
 
+0.15.0 (2021-10-8)
++++++++++++++++++++
+
+* Modify `Ok.map_err` and `Error.map_err` implementation to match `Result.map_err`
+* Add pipe operator for `Result` monads.
+
 0.14.0 (2021-07-22)
 +++++++++++++++++++
 
