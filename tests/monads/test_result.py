@@ -111,8 +111,8 @@ def test_map(result, fn, expected):
 
 
 @pytest.mark.parametrize('result, fn, default, expected', [
-    (Ok("foo"), lambda x: len(x), 42, 3),
-    (Error("bar"), lambda x: len(x), 42, 42),
+    (Ok("foo"), lambda x: x.upper(), 'baz', 'FOO'),
+    (Error("bar"), lambda x: x.upper(), 'baz', 'baz'),
 ])
 def test_map_or(result, fn, default, expected):
     res = result.map_or(fn, default)
@@ -133,7 +133,7 @@ def test_map_or_else(result, fn, defaultfn, expected):
     (Error(500), __stringify, Error('error code: 500')),
 ])
 def test_map_err(result, fn, expected):
-    res = result.map_err(fn)
+    res = result.map_err(lambda result_: Error(fn(result_)))
     assert type(res) == type(expected)
     assert res.unwrap() == expected.unwrap()
 

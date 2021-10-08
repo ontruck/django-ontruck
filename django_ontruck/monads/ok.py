@@ -49,7 +49,7 @@ class Ok(Result[T, Any]):
     ) -> U:
         return fn(self._inner_value)
 
-    def map_err(self, fn: Callable[[T], T]) -> Result[T, E]:
+    def map_err(self, fn: Callable[[E], Result[T, F]]) -> Result[T, E]:
         return self
 
     def unwrap(self) -> T:

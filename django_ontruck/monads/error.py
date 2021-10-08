@@ -49,8 +49,8 @@ class Error(Result[Any, E]):
     ) -> U:
         return defaultfn(self._inner_value)
 
-    def map_err(self, fn: Callable[[E], E]) -> Result[T, E]:
-        return Error(fn(self._inner_value))
+    def map_err(self, fn: Callable[[E], Result[T, F]]) -> Result[T, F]:
+        return fn(self._inner_value)
 
     def unwrap(self) -> E:
         return self._inner_value
