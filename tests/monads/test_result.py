@@ -110,6 +110,16 @@ def test_map(result, fn, expected):
     assert res.unwrap() == expected.unwrap()
 
 
+@pytest.mark.parametrize('result, fn_1, fn_2, expected', [
+    (Ok(2), __square, lambda x: Ok(x + 2), Ok(6)),
+    (Error(2), __square, lambda x: Ok(x + 2), Error(2)),
+])
+def test_pipe(result, fn_1, fn_2, expected):
+    res = result | fn_1 | fn_2
+    assert type(res) == type(expected)
+    assert res.unwrap() == expected.unwrap()
+
+
 @pytest.mark.parametrize('result, fn, default, expected', [
     (Ok("foo"), lambda x: x.upper(), 'baz', 'FOO'),
     (Error("bar"), lambda x: x.upper(), 'baz', 'baz'),
