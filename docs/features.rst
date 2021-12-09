@@ -88,6 +88,25 @@ Base model to track some CRUD dates and author. Safe delete is implemented.
         title = models.CharField(max_length=50)
 
 
+There is a BaseManager in order to filter `deleted=False` elements by default.
+
+Define manager for your Queryset
+
+.. code-block:: python
+
+    #
+    FooManager = BaseManager.from_queryset(QuerySet)
+
+
+Set managers including deleted elements or not
+
+.. code-block:: python
+
+    class FooModel(BaseModel):
+        ...
+        objects = FooManager(include_deleted=False)
+        objects_all = FooManager(include_deleted=True)
+
 *********
 Notifiers
 *********
