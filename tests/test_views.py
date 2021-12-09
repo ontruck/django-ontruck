@@ -131,8 +131,8 @@ class TestViews:
 
         response = my_view(request, pk=sample.id)
         assert response.status_code == 204
-        assert FooModel.objects.count() == 1
-        foo_model = FooModel.objects.first()
+        assert FooModel.objects_all.count() == 1
+        foo_model = FooModel.objects_all.first()
         assert foo_model.deleted is True
         assert foo_model.deleted_at is not None
         assert foo_model.deleted_by == user
