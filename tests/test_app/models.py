@@ -1,17 +1,24 @@
 from django.db import models
-from django.db.models import Model
+from django.db.models import QuerySet
 
 from django_ontruck.denormalisation import (
     Denormalised, SignalListener, EventListener, sync_handler
 )
 from django_ontruck.models import BaseModel
+from django_ontruck.managers import BaseManager
 from tests.test_app.events.events import BarEvent, baz
+
+
+FooManager = BaseManager.from_queryset(QuerySet)
 
 
 class FooModel(BaseModel):
     title = models.CharField(max_length=50)
     extra = models.CharField(max_length=50, blank=True)
     pre_serializer = models.CharField(max_length=50, blank=True, null=True)
+
+    objects = FooManager(include_deleted=False)
+    objects_all = FooManager(include_deleted=True)
 
 
 class BarModel(BaseModel):
