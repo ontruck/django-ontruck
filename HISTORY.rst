@@ -3,6 +3,11 @@
 History
 -------
 
+0.16.0 (2021-12-9)
++++++++++++++++++++
+
+* `BaseManager` to allow filtering `deleted=True` elements.
+
 0.15.0 (2021-10-8)
 +++++++++++++++++++
 
