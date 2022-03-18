@@ -77,14 +77,14 @@ class PytestAtomic(DepthTrackingAtomic):
         return returned
 
 
-def pytest_atomic(using=None, savepoint=True):
+def pytest_atomic(using=None, savepoint=True, durable=False):
     # Bare decorator: @atomic -- although the first argument is called
     # `using`, it's actually the function being decorated.
     if callable(using):
-        return PytestAtomic(Atomic(DEFAULT_DB_ALIAS, savepoint))(using)
+        return PytestAtomic(Atomic(DEFAULT_DB_ALIAS, savepoint, durable))(using)
     # Decorator: @atomic(...) or context manager: with atomic(...): ...
     else:
-        return PytestAtomic(Atomic(using, savepoint))
+        return PytestAtomic(Atomic(using, savepoint, durable))
 
 
 class PatchedAtomic(ContextDecorator):
